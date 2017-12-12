@@ -1,0 +1,40 @@
+{
+  "name": "cryptowatchjs",
+  "version": "0.0.9",
+  "description": "JavaScript library to call Cryptowat.ch API.",
+  "main": "dist/cryptowatch.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scastiel/cryptowatchjs"
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build":
+      "flow-remove-types src/ -d dist --ignore '/\\.test\\.js$/' && flow gen-flow-files src --out-dir dist",
+    "flow": "flow",
+    "lint": "eslint src",
+    "test": "jest src/",
+    "test:watch": "npm run test -- --watch",
+    "prepare": "npm run build"
+  },
+  "keywords": [],
+  "author": "Sébastien Castiel <sebastien@castiel.me>",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "babel-eslint": "^8.0.3",
+    "babel-preset-flow": "^6.23.0",
+    "eslint": "^4.13.1",
+    "eslint-config-standard": "^11.0.0-beta.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "flow-bin": "^0.61.0",
+    "flow-remove-types": "^1.2.3",
+    "jest": "^21.2.1",
+    "prettier-eslint": "^8.2.5"
+  },
+  "dependencies": {
+    "isomorphic-fetch": "^2.2.1"
+  }
+}

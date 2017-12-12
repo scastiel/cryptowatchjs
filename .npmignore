@@ -1,0 +1,6 @@
+dist/**/*.map
+src
+.babelrc
+.eslintrc.js
+.flowconfig
+flow-typed
