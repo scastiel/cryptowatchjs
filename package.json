@@ -1,6 +1,6 @@
 {
   "name": "cryptowatchjs",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "JavaScript library to call Cryptowat.ch API.",
   "main": "dist/cryptowatch.js",
   "repository": {

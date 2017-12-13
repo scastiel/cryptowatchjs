@@ -244,17 +244,21 @@ async function fetchPricesByExchange (): Promise<{
 
 async function fetchAveragePrices (): Promise<{ [string]: number }> {
   const pricesByPair = await fetchPricesByPair()
-  return Object.keys(pricesByPair).reduce(
-    (acc, pair) => ({
+  return Object.keys(pricesByPair).reduce((acc, pair) => {
+    const pricesForPair = pricesByPair[pair]
+    const exchanges = Object.keys(pricesByPair[pair])
+    const exchangesWithNonZeroPrice = exchanges.filter(
+      exchange => pricesForPair[exchange] > 0
+    )
+    return {
       ...acc,
       [pair]:
-        Object.keys(pricesByPair[pair])
-          .filter(exchange => pricesByPair[pair][exchange] > 0)
-          .reduce((sum, exchange) => sum + pricesByPair[pair][exchange], 0) /
-        Object.keys(pricesByPair[pair]).length
-    }),
-    {}
-  )
+        exchangesWithNonZeroPrice.reduce(
+          (sum, exchange) => sum + pricesForPair[exchange],
+          0
+        ) / exchangesWithNonZeroPrice.length
+    }
+  }, {})
 }
 
 module.exports = {
