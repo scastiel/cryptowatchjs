@@ -1,6 +1,6 @@
 {
   "name": "cryptowatchjs",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "JavaScript library to call Cryptowat.ch API.",
   "main": "dist/cryptowatch.js",
   "repository": {
@@ -9,7 +9,8 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "flow-remove-types src/ -d dist --ignore '/\\.test\\.js$/' && flow gen-flow-files src --out-dir dist",
+    "build":
+      "flow-remove-types src/ -d dist --ignore '/\\.test\\.js$/' && flow gen-flow-files src --out-dir dist",
     "flow": "flow",
     "lint": "eslint src",
     "test": "jest src/",
