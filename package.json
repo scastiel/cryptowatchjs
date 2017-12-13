@@ -9,8 +9,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build":
-      "flow-remove-types src/ -d dist --ignore '/\\.test\\.js$/' && flow gen-flow-files src --out-dir dist",
+    "build": "flow-remove-types src/ -d dist --ignore '/\\.test\\.js$/' && flow gen-flow-files src --out-dir dist",
     "flow": "flow",
     "lint": "eslint src",
     "test": "jest src/",

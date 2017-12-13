@@ -83,8 +83,29 @@ type ohlc = {
   [number]: Array<candle>
 }
 
+type exchange = {
+  symbol: string,
+  name: string,
+  active: boolean,
+  route: ?string,
+  routes: ?Array<string>
+}
+
 async function fetchMarkets (): Promise<Array<market>> {
   return returnResultFromUrl('https://api.cryptowat.ch/markets')
+}
+
+async function fetchExchanges (): Promise<Array<exchange>> {
+  return returnResultFromUrl('https://api.cryptowat.ch/exchanges')
+}
+
+async function fetchExchangeDetails (symbol: string): Promise<exchange> {
+  return {
+    symbol,
+    ...(await returnResultFromUrl(
+      `https://api.cryptowat.ch/exchanges/${symbol}`
+    ))
+  }
 }
 
 async function fetchAssets (): Promise<Array<asset>> {
@@ -146,12 +167,9 @@ async function fetchMarketTrades (
   const result = await returnResultFromUrl(
     `https://api.cryptowat.ch/markets/${exchangeSymbol}/${pairSymbol}/trades`
   )
-  const tradeFromArray: ([number, number, number, number]) => trade = ([
-    id,
-    timestamp,
-    price,
-    amount
-  ]) => ({
+  const tradeFromArray: ([number, number, number, number]) => trade = (
+    [id, timestamp, price, amount]
+  ) => ({
     id,
     timestamp,
     price,
@@ -169,14 +187,9 @@ async function fetchMarketOHLC (
   )
   const candleFromArray: (
     [number, number, number, number, number, number]
-  ) => candle = ([
-    closeTime,
-    openPrice,
-    highPrice,
-    lowPrice,
-    closePrice,
-    volume
-  ]) => ({
+  ) => candle = (
+    [closeTime, openPrice, highPrice, lowPrice, closePrice, volume]
+  ) => ({
     closeTime,
     openPrice,
     highPrice,
@@ -201,6 +214,49 @@ async function fetchPairDetails (pairSymbol: string): Promise<pair> {
   return returnResultFromUrl(`https://api.cryptowat.ch/pairs/${pairSymbol}`)
 }
 
+async function fetchPricesByPair (): Promise<{
+  [string]: { [string]: number }
+}> {
+  const result = await returnResultFromUrl(
+    `https://api.cryptowat.ch/markets/prices`
+  )
+  return Object.keys(result).reduce((acc, key) => {
+    const [exchange, pair] = key.split(':')
+    const pricesByExchangesForPair = acc[pair] || {}
+    pricesByExchangesForPair[exchange] = result[key]
+    return { ...acc, [pair]: pricesByExchangesForPair }
+  }, {})
+}
+
+async function fetchPricesByExchange (): Promise<{
+  [string]: { [string]: number }
+}> {
+  const result = await returnResultFromUrl(
+    `https://api.cryptowat.ch/markets/prices`
+  )
+  return Object.keys(result).reduce((acc, key) => {
+    const [exchange, pair] = key.split(':')
+    const pricesByPairsForExchange = acc[exchange] || {}
+    pricesByPairsForExchange[pair] = result[key]
+    return { ...acc, [exchange]: pricesByPairsForExchange }
+  }, {})
+}
+
+async function fetchAveragePrices (): Promise<{ [string]: number }> {
+  const pricesByPair = await fetchPricesByPair()
+  return Object.keys(pricesByPair).reduce(
+    (acc, pair) => ({
+      ...acc,
+      [pair]:
+        Object.keys(pricesByPair[pair])
+          .filter(exchange => pricesByPair[pair][exchange] > 0)
+          .reduce((sum, exchange) => sum + pricesByPair[pair][exchange], 0) /
+        Object.keys(pricesByPair[pair]).length
+    }),
+    {}
+  )
+}
+
 module.exports = {
   fetchMarkets,
   fetchMarketDetails,
@@ -212,5 +268,10 @@ module.exports = {
   fetchAssets,
   fetchAssetDetails,
   fetchPairs,
-  fetchPairDetails
+  fetchPairDetails,
+  fetchExchanges,
+  fetchExchangeDetails,
+  fetchPricesByPair,
+  fetchPricesByExchange,
+  fetchAveragePrices
 }
