@@ -9,13 +9,15 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build":
-      "flow-remove-types src/ -d dist --ignore '/\\.test\\.js$/' && flow gen-flow-files src --out-dir dist",
+    "build": "flow-remove-types src/ -d dist --ignore '/\\.test\\.js$/' && flow gen-flow-files src --out-dir dist",
     "flow": "flow",
     "lint": "eslint src",
     "test": "jest src/",
     "test:watch": "npm run test -- --watch",
     "prepare": "npm run build"
+  },
+  "bin": {
+    "cryptowatch": "bin/cryptowatch.js"
   },
   "keywords": [],
   "author": "Sébastien Castiel <sebastien@castiel.me>",
@@ -36,5 +38,9 @@
   },
   "optionalDependencies": {
     "isomorphic-fetch": "^2.2.1"
+  },
+  "dependencies": {
+    "commander": "^2.12.2",
+    "text-table": "^0.2.0"
   }
 }
